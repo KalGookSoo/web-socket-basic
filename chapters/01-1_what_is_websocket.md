@@ -19,7 +19,7 @@
 ```mermaid
 graph LR
     A[클라이언트] <--> B[웹 소켓 연결] <--> C[서버]
-    style B fill:#282,stroke:#333,stroke-width:2px
+    style B fill:#3cb371,stroke:#333,stroke-width:2px
 ```
 
 ### 기존 HTTP 통신과의 차이점
