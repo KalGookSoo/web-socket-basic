@@ -32,11 +32,15 @@
 ### [Chapter 02 웹 소켓 기본 구현](#chapter-02-웹-소켓-기본-구현)
 #### [02-1 웹 소켓 연결 설정](chapters/02-1_websocket_connection.md)
 - 웹 소켓 URL 구조
-- 클라이언트 측 연결 설정
+- 서버 측 구현 (Java)
+  - Jakarta WebSocket API (JSR-356)
+  - Spring WebSocket
+- 클라이언트 측 연결 설정 (TypeScript)
   - WebSocket 생성자
-  - 이벤트 핸들러 등록
+  - 이벤트 리스너 등록
 - 연결 상태 관리
 - 연결 종료 처리
+- 자동 재연결 구현
 - 5가지 키워드로 정리하는 핵심 포인트
 - 확인 문제
 

@@ -7,6 +7,8 @@
   - [01-1 웹 소켓이란 무엇인가](#01-1-웹-소켓이란-무엇인가)
   - [01-2 웹 소켓의 특징](#01-2-웹-소켓의-특징)
   - [01-3 웹 소켓 지원 환경](#01-3-웹-소켓-지원-환경)
+- [Chapter 02 웹 소켓 기본 구현](#chapter-02-웹-소켓-기본-구현)
+  - [02-1 웹 소켓 연결 설정](#02-1-웹-소켓-연결-설정)
 
 ## Chapter 01 웹 소켓 소개
 
@@ -88,10 +90,76 @@
 - WebSocket API와 완전히 동일한 인터페이스 제공: 이것은 틀린 설명입니다. Socket.IO는 표준 WebSocket API와는 다른 자체 API를 제공합니다. 이는 더 많은 기능을 제공하지만, 표준 WebSocket과 직접 호환되지는 않습니다.
 
 #### 문제 3
-**문제**: 브라우저에서 웹 소켓 지원 여부를 확인하는 올바른 자바스크립트 코드는?
+**문제**: 브라우저에서 웹 소켓 지원 여부를 확인하는 올바른 타입스크립트 코드는?
 
 **정답**: `if ('WebSocket' in window) { /* 지원 */ }`
 
-**해설**: 브라우저에서 웹 소켓 지원 여부를 확인하는 가장 일반적이고 표준적인 방법은 `'WebSocket' in window` 표현식을 사용하는 것입니다. 이 코드는 window 객체에 WebSocket 생성자가 존재하는지 확인하여 브라우저가 웹 소켓을 지원하는지 판단합니다. `window.WebSocket`도 유사한 방식으로 작동할 수 있지만, 속성이 undefined일 경우 오류가 발생할 수 있으므로 `in` 연산자를 사용하는 것이 더 안전합니다. `navigator.supportsWebSocket`과 `document.supportsWebSocket`은 실제로 존재하지 않는 속성이므로 웹 소켓 지원 여부를 확인하는 데 사용할 수 없습니다.
+**해설**: 브라우저에서 웹 소켓 지원 여부를 확인하는 가장 일반적이고 표준적인 방법은 `'WebSocket' in window` 표현식을 사용하는 것입니다. 이 코드는 window 객체에 WebSocket 생성자가 존재하는지 확인하여 브라우저가 웹 소켓을 지원하는지 판단합니다. 타입스크립트에서는 `if (typeof WebSocket !== 'undefined')` 형태로 작성할 수도 있습니다. `window.WebSocket`도 유사한 방식으로 작동할 수 있지만, 속성이 undefined일 경우 오류가 발생할 수 있으므로 `in` 연산자나 `typeof` 검사를 사용하는 것이 더 안전합니다. `navigator.supportsWebSocket`과 `document.supportsWebSocket`은 실제로 존재하지 않는 속성이므로 웹 소켓 지원 여부를 확인하는 데 사용할 수 없습니다.
+
+## Chapter 02 웹 소켓 기본 구현
+
+### 02-1 웹 소켓 연결 설정
+
+#### 문제 1
+**문제**: 웹 소켓 URL에서 사용하는 프로토콜 식별자로 올바른 것은?
+
+**정답**: ws:// 또는 wss://
+
+**해설**: 웹 소켓 URL은 `ws://` 또는 `wss://` 프로토콜 식별자를 사용합니다. `ws://`는 일반 웹 소켓 연결을 나타내고, `wss://`는 SSL/TLS를 통한 보안 웹 소켓 연결을 나타냅니다. 이는 HTTP와 HTTPS의 관계와 유사합니다. 프로덕션 환경에서는 데이터 암호화, 중간자 공격 방지, 혼합 콘텐츠 문제 방지를 위해 항상 `wss://`를 사용하는 것이 권장됩니다. `http://`, `https://`, `websocket://`, `websockets://`, `socket://`, `sockets://` 등은 웹 소켓 연결에 사용되는 유효한 프로토콜 식별자가 아닙니다.
+
+#### 문제 2
+**문제**: WebSocket 객체의 readyState 값이 1일 때, 이는 어떤 상태를 의미하는가?
+
+**정답**: 연결됨
+
+**해설**: WebSocket 객체의 `readyState` 값이 1(WebSocket.OPEN)일 때, 이는 웹 소켓 연결이 설정되어 데이터를 송수신할 수 있는 상태임을 의미합니다. WebSocket 객체는 다음과 같은 readyState 값을 가질 수 있습니다:
+- WebSocket.CONNECTING (0): 연결이 설정 중인 상태
+- WebSocket.OPEN (1): 연결이 설정되어 통신이 가능한 상태
+- WebSocket.CLOSING (2): 연결이 종료 중인 상태
+- WebSocket.CLOSED (3): 연결이 종료되었거나 열리지 않은 상태
+따라서 readyState 값이 1일 때는 연결이 성공적으로 설정되어 메시지를 주고받을 수 있는 상태입니다.
+
+#### 문제 3
+**문제**: 웹 소켓 연결을 종료하는 코드로 올바르지 않은 것은?
+
+**정답**: socket.terminate();
+
+**해설**: `socket.terminate()`는 표준 WebSocket API에 존재하지 않는 메서드입니다. 이는 일부 서버 측 WebSocket 라이브러리(예: Node.js의 ws)에서 제공하는 메서드이지만, 브라우저의 WebSocket API에는 포함되어 있지 않습니다. 웹 소켓 연결을 종료하는 올바른 방법은 `socket.close()` 메서드를 사용하는 것입니다. 이 메서드는 선택적으로 종료 코드와 이유를 매개변수로 받을 수 있습니다(예: `socket.close(1000, '정상 종료')` 또는 `socket.close(4000, '사용자 정의 종료 이유')`). 기본적으로 `socket.close()`는 코드 1000(정상 종료)으로 연결을 종료합니다.
+
+#### 문제 4
+**문제**: 웹 소켓 이벤트 핸들러에 관한 설명으로 올바른 것을 모두 고르세요.
+
+**정답**: onopen은 연결이 성공적으로 설정되었을 때 호출된다, onerror는 연결 중 오류가 발생했을 때 호출된다, addEventListener 메서드를 사용하여 이벤트 핸들러를 등록할 수 있다
+
+**해설**: 
+- onopen은 연결이 성공적으로 설정되었을 때 호출된다: 맞습니다. `onopen` 이벤트 핸들러나 `addEventListener('open', handler)` 이벤트 리스너는 웹 소켓 연결이 성공적으로 설정되었을 때 호출됩니다.
+- onmessage는 서버로 메시지를 보낼 때 호출된다: 틀렸습니다. `onmessage` 이벤트 핸들러나 `addEventListener('message', handler)` 이벤트 리스너는 서버로부터 메시지를 받았을 때 호출됩니다. 서버로 메시지를 보낼 때는 `send()` 메서드를 사용하며, 이때 특별한 이벤트는 발생하지 않습니다.
+- onerror는 연결 중 오류가 발생했을 때 호출된다: 맞습니다. `onerror` 이벤트 핸들러나 `addEventListener('error', handler)` 이벤트 리스너는 웹 소켓 연결 중 오류가 발생했을 때 호출됩니다.
+- onclose는 연결이 종료되었을 때만 호출되고, 연결 실패 시에는 호출되지 않는다: 틀렸습니다. `onclose` 이벤트 핸들러나 `addEventListener('close', handler)` 이벤트 리스너는 연결이 정상적으로 종료되었을 때뿐만 아니라, 연결 실패 시에도 호출될 수 있습니다. 이때 `CloseEvent` 객체의 `wasClean` 속성을 통해 정상 종료 여부를 확인할 수 있습니다.
+- addEventListener 메서드를 사용하여 이벤트 핸들러를 등록할 수 있다: 맞습니다. WebSocket 객체는 `addEventListener` 메서드를 지원하므로, `socket.addEventListener('open', handler)` 형식으로 이벤트 리스너를 등록할 수 있습니다. 이 방식은 여러 리스너를 동일한 이벤트에 등록할 수 있고, 필요에 따라 리스너를 제거할 수 있어 더 유연합니다.
+
+#### 문제 5
+**문제**: 웹 소켓 연결의 보안에 관한 설명으로 올바른 것은?
+
+**정답**: HTTPS 페이지에서는 ws:// 프로토콜을 사용할 수 없다
+
+**해설**: HTTPS 페이지에서는 보안상의 이유로 암호화되지 않은 `ws://` 프로토콜을 사용할 수 없습니다. 이는 "혼합 콘텐츠(mixed content)" 문제로, 보안 페이지(HTTPS)에서 비보안 콘텐츠(ws://)를 로드하려고 할 때 브라우저가 이를 차단합니다. HTTPS 페이지에서는 반드시 `wss://` 프로토콜을 사용해야 합니다.
+
+다른 보기들은 모두 틀린 설명입니다:
+- ws:// 프로토콜은 항상 wss:// 프로토콜보다 빠르다: 틀렸습니다. 암호화 과정에서 약간의 오버헤드가 있을 수 있지만, 네트워크 조건과 구현에 따라 성능 차이는 미미할 수 있으며, 보안의 이점이 더 중요합니다.
+- wss:// 프로토콜은 SSL/TLS를 사용하지 않는다: 틀렸습니다. `wss://`는 SSL/TLS를 통한 보안 웹 소켓 연결을 의미합니다.
+- 프로덕션 환경에서는 성능을 위해 ws:// 프로토콜을 사용하는 것이 좋다: 틀렸습니다. 프로덕션 환경에서는 데이터 보안과 무결성을 위해 항상 `wss://` 프로토콜을 사용하는 것이 권장됩니다.
+
+#### 문제 6
+**문제**: Java에서 웹 소켓 서버를 구현하는 방법으로 올바른 것을 모두 고르세요.
+
+**정답**: Jakarta WebSocket API(JSR-356)를 사용한 어노테이션 기반 구현, Spring Framework의 WebSocketHandler 인터페이스 구현
+
+**해설**: 
+- Jakarta WebSocket API(JSR-356)를 사용한 어노테이션 기반 구현: 맞습니다. Java EE 7부터 표준화된 Jakarta WebSocket API는 `@ServerEndpoint`, `@OnOpen`, `@OnMessage`, `@OnError`, `@OnClose` 등의 어노테이션을 사용하여 웹 소켓 서버를 쉽게 구현할 수 있게 해줍니다.
+- Spring Framework의 WebSocketHandler 인터페이스 구현: 맞습니다. Spring Framework는 `WebSocketHandler` 인터페이스와 그 구현체인 `TextWebSocketHandler`, `BinaryWebSocketHandler` 등을 제공하여 웹 소켓 서버를 구현할 수 있게 해줍니다.
+- Node.js의 ws 라이브러리 사용: 틀렸습니다. 이는 Java가 아닌 JavaScript/Node.js 환경에서 사용하는 방법입니다.
+- Java의 내장 WebSocket 클래스 직접 사용: 틀렸습니다. Java 표준 라이브러리에는 웹 소켓 서버를 직접 구현하기 위한 내장 클래스가 없습니다. 대신 Jakarta WebSocket API나 Spring과 같은 프레임워크를 사용해야 합니다.
+- Socket.IO Java 서버 구현: 틀렸습니다. Socket.IO는 주로 Node.js 환경을 위한 라이브러리이며, Java 구현체도 있지만 표준적인 웹 소켓 구현 방법은 아닙니다.
 
 
