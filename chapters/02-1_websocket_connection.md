@@ -266,16 +266,16 @@ sequenceDiagram
     Client->>WebSocket: new WebSocket(url)
     WebSocket->>Server: 연결 요청
     Server->>WebSocket: 연결 수락
-    WebSocket->>Client: onopen 이벤트 발생
+    WebSocket->>Client: open 이벤트 발생
     
     Server->>WebSocket: 메시지 전송
-    WebSocket->>Client: onmessage 이벤트 발생
+    WebSocket->>Client: message 이벤트 발생
     
     Note over WebSocket: 오류 발생
-    WebSocket->>Client: onerror 이벤트 발생
+    WebSocket->>Client: error 이벤트 발생
     
     Server->>WebSocket: 연결 종료
-    WebSocket->>Client: onclose 이벤트 발생
+    WebSocket->>Client: close 이벤트 발생
 ```
 
 ### 연결 상태 관리

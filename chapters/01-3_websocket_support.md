@@ -77,9 +77,11 @@ graph TD
   - 다양한 전송 메커니즘 지원 (WebSocket, AJAX Long Polling, Flash 등)
   - 자동 재연결, 이벤트 기반 통신 등 추가 기능 제공
 
-```javascript
+```typescript
 // Socket.IO 클라이언트 예제
-const socket = io('https://example.com');
+import { Socket } from 'socket.io-client';
+
+const socket: Socket = io('https://example.com');
 
 socket.on('connect', () => {
   console.log('서버에 연결되었습니다.');
@@ -88,7 +90,7 @@ socket.on('connect', () => {
   socket.emit('message', '안녕하세요!');
 });
 
-socket.on('update', (data) => {
+socket.on('update', (data: any) => {
   console.log('서버로부터 업데이트 수신:', data);
 });
 
@@ -131,21 +133,26 @@ graph TD
 
 자바스크립트를 사용하여 브라우저의 웹 소켓 지원 여부를 확인할 수 있습니다:
 
-```javascript
+```typescript
 // 웹 소켓 지원 여부 확인
-function isWebSocketSupported() {
+function isWebSocketSupported(): boolean {
   return 'WebSocket' in window || 'MozWebSocket' in window;
 }
 
 if (isWebSocketSupported()) {
   console.log('이 브라우저는 웹 소켓을 지원합니다.');
   // 웹 소켓 기반 구현
-  const socket = new WebSocket('ws://example.com/socket');
+  const socket: WebSocket = new WebSocket('ws://example.com/socket');
   // ...
 } else {
   console.log('이 브라우저는 웹 소켓을 지원하지 않습니다.');
   // 대체 기술 사용
   setupLongPolling();
+}
+
+// setupLongPolling 함수 타입 선언
+function setupLongPolling(): void {
+  // Long polling 구현
 }
 ```
 
@@ -153,15 +160,15 @@ if (isWebSocketSupported()) {
 
 보안 웹 소켓(WSS) 프로토콜 지원 여부도 확인할 수 있습니다:
 
-```javascript
-function isSecureWebSocketSupported() {
+```typescript
+function isSecureWebSocketSupported(): boolean {
   if (!isWebSocketSupported()) return false;
   
   try {
     // 보안 웹 소켓 연결 시도
-    const socket = new WebSocket('wss://example.com/socket');
+    const socket: WebSocket = new WebSocket('wss://example.com/socket');
     return true;
-  } catch (e) {
+  } catch (e: unknown) {
     return false;
   }
 }
@@ -171,23 +178,29 @@ function isSecureWebSocketSupported() {
 
 웹 소켓 지원 여부에 따라 점진적으로 기능을 향상시키는 접근 방식:
 
-```javascript
+```typescript
 // 통신 모듈 예제
+type ConnectionType = 'websocket' | 'sse' | 'polling';
+
 class CommunicationManager {
-  constructor(url) {
+  private baseUrl: string;
+  private connection: WebSocket | EventSource | null;
+  private connectionType: ConnectionType;
+  
+  constructor(url: string) {
     this.baseUrl = url;
     this.connection = null;
     this.connectionType = this.detectBestConnectionMethod();
     this.connect();
   }
   
-  detectBestConnectionMethod() {
+  private detectBestConnectionMethod(): ConnectionType {
     if ('WebSocket' in window) return 'websocket';
     if ('EventSource' in window) return 'sse';
     return 'polling';
   }
   
-  connect() {
+  private connect(): void {
     switch (this.connectionType) {
       case 'websocket':
         this.connection = new WebSocket(this.baseUrl.replace('http', 'ws'));
@@ -201,6 +214,10 @@ class CommunicationManager {
     }
     
     console.log(`연결 방식: ${this.connectionType}`);
+  }
+  
+  private startPolling(): void {
+    // 폴링 구현
   }
   
   // 나머지 구현...

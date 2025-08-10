@@ -83,27 +83,27 @@ graph TD
 - 비동기 메시지 처리
 - 이벤트 리스너를 통한 메시지 수신 처리
 
-```javascript
+```typescript
 // 웹 소켓 이벤트 기반 통신 예제
-const socket = new WebSocket('ws://example.com/socket');
+const socket: WebSocket = new WebSocket('ws://example.com/socket');
 
 // 연결 이벤트
-socket.addEventListener('open', (event) => {
+socket.addEventListener('open', (event: Event) => {
   console.log('웹 소켓 연결이 열렸습니다.');
 });
 
 // 메시지 수신 이벤트
-socket.addEventListener('message', (event) => {
+socket.addEventListener('message', (event: MessageEvent) => {
   console.log('서버로부터 메시지 수신:', event.data);
 });
 
 // 오류 이벤트
-socket.addEventListener('error', (error) => {
+socket.addEventListener('error', (error: Event) => {
   console.error('웹 소켓 오류 발생:', error);
 });
 
 // 연결 종료 이벤트
-socket.addEventListener('close', (event) => {
+socket.addEventListener('close', (event: CloseEvent) => {
   console.log('웹 소켓 연결이 닫혔습니다.');
 });
 ```
@@ -166,11 +166,11 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph "HTTP 요청 구조"
-        A[HTTP 헤더 \n 수백 바이트] --> B[HTTP 본문]
+        A[HTTP 헤더<br>수백 바이트] --> B[HTTP 본문]
     end
     
     subgraph "웹 소켓 프레임 구조"
-        C[프레임 헤더 \n 2-14 바이트] --> D[페이로드 데이터]
+        C[프레임 헤더<br>2-14 바이트] --> D[페이로드 데이터]
     end
     
     style A fill:#c35b5b,stroke:#333,stroke-width:1px
@@ -185,19 +185,19 @@ graph LR
 - Base64 인코딩 없이 원시 바이너리 데이터 전송으로 오버헤드 감소
 - 텍스트와 바이너리 프레임 유형을 구분하여 처리
 
-```javascript
+```typescript
 // 바이너리 데이터 전송 예제
-const socket = new WebSocket('ws://example.com/socket');
+const socket: WebSocket = new WebSocket('ws://example.com/socket');
 
-socket.addEventListener('open', () => {
+socket.addEventListener('open', (event: Event) => {
   // ArrayBuffer를 사용한 바이너리 데이터 전송
-  const buffer = new ArrayBuffer(4);
-  const view = new Uint32Array(buffer);
+  const buffer: ArrayBuffer = new ArrayBuffer(4);
+  const view: Uint32Array = new Uint32Array(buffer);
   view[0] = 42;
   socket.send(buffer);
 
   // Blob 객체를 사용한 바이너리 데이터 전송
-  const blob = new Blob(['바이너리 데이터'], {type: 'application/octet-stream'});
+  const blob: Blob = new Blob(['바이너리 데이터'], {type: 'application/octet-stream'});
   socket.send(blob);
 });
 ```
@@ -216,8 +216,8 @@ socket.addEventListener('open', () => {
 
 ```mermaid
 graph LR
-    A[example.com \n 클라이언트] --> B[api.another.com \n 웹 소켓 서버]
-    C[third-party.com \n 클라이언트] --> B
+    A[example.com<br>클라이언트] --> B[api.another.com<br>웹 소켓 서버]
+    C[third-party.com<br>클라이언트] --> B
     
     style A fill:#daa520,stroke:#333,stroke-width:1px
     style C fill:#daa520,stroke:#333,stroke-width:1px
@@ -232,13 +232,15 @@ graph LR
 - **인증 메커니즘**: 토큰 기반 인증, 쿠키 인증 등을 통한 접근 제어
 - **메시지 검증**: 모든 수신 메시지의 유효성 검사 및 필터링
 
-```javascript
+```typescript
 // 서버 측 출처 검증 예제 (Node.js + ws 라이브러리)
-const WebSocket = require('ws');
-const server = new WebSocket.Server({ port: 8080 });
+import WebSocket from 'ws';
+import { IncomingMessage } from 'http';
 
-server.on('connection', (ws, req) => {
-  const origin = req.headers.origin;
+const server: WebSocket.Server = new WebSocket.Server({ port: 8080 });
+
+server.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+  const origin: string | undefined = req.headers.origin as string;
   
   // 허용된 출처인지 확인
   if (origin !== 'https://trusted-site.com') {
@@ -247,7 +249,7 @@ server.on('connection', (ws, req) => {
   }
   
   // 연결 허용 및 메시지 처리
-  ws.on('message', (message) => {
+  ws.on('message', (message: WebSocket.Data) => {
     console.log('수신된 메시지:', message);
   });
 });
