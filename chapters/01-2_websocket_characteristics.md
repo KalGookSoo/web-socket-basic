@@ -88,24 +88,24 @@ graph TD
 const socket = new WebSocket('ws://example.com/socket');
 
 // 연결 이벤트
-socket.onopen = (event) => {
+socket.addEventListener('open', (event) => {
   console.log('웹 소켓 연결이 열렸습니다.');
-};
+});
 
 // 메시지 수신 이벤트
-socket.onmessage = (event) => {
+socket.addEventListener('message', (event) => {
   console.log('서버로부터 메시지 수신:', event.data);
-};
+});
 
 // 오류 이벤트
-socket.onerror = (error) => {
+socket.addEventListener('error', (error) => {
   console.error('웹 소켓 오류 발생:', error);
-};
+});
 
 // 연결 종료 이벤트
-socket.onclose = (event) => {
+socket.addEventListener('close', (event) => {
   console.log('웹 소켓 연결이 닫혔습니다.');
-};
+});
 ```
 
 ### 단일 연결 유지
@@ -189,17 +189,17 @@ graph LR
 // 바이너리 데이터 전송 예제
 const socket = new WebSocket('ws://example.com/socket');
 
-socket.onopen = () => {
+socket.addEventListener('open', () => {
   // ArrayBuffer를 사용한 바이너리 데이터 전송
   const buffer = new ArrayBuffer(4);
   const view = new Uint32Array(buffer);
   view[0] = 42;
   socket.send(buffer);
-  
+
   // Blob 객체를 사용한 바이너리 데이터 전송
   const blob = new Blob(['바이너리 데이터'], {type: 'application/octet-stream'});
   socket.send(blob);
-};
+});
 ```
 
 ### 크로스 도메인 통신
