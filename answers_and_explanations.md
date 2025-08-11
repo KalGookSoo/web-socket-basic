@@ -151,18 +151,6 @@
 - wss:// 프로토콜은 SSL/TLS를 사용하지 않는다: 틀렸습니다. `wss://`는 SSL/TLS를 통한 보안 웹 소켓 연결을 의미합니다.
 - 프로덕션 환경에서는 성능을 위해 ws:// 프로토콜을 사용하는 것이 좋다: 틀렸습니다. 프로덕션 환경에서는 데이터 보안과 무결성을 위해 항상 `wss://` 프로토콜을 사용하는 것이 권장됩니다.
 
-#### 문제 6
-**문제**: Java에서 웹 소켓 서버를 구현하는 방법으로 올바른 것을 모두 고르세요.
-
-**정답**: Jakarta WebSocket API(JSR-356)를 사용한 어노테이션 기반 구현, Spring Framework의 WebSocketHandler 인터페이스 구현
-
-**해설**: 
-- Jakarta WebSocket API(JSR-356)를 사용한 어노테이션 기반 구현: 맞습니다. Java EE 7부터 표준화된 Jakarta WebSocket API는 `@ServerEndpoint`, `@OnOpen`, `@OnMessage`, `@OnError`, `@OnClose` 등의 어노테이션을 사용하여 웹 소켓 서버를 쉽게 구현할 수 있게 해줍니다.
-- Spring Framework의 WebSocketHandler 인터페이스 구현: 맞습니다. Spring Framework는 `WebSocketHandler` 인터페이스와 그 구현체인 `TextWebSocketHandler`, `BinaryWebSocketHandler` 등을 제공하여 웹 소켓 서버를 구현할 수 있게 해줍니다.
-- Node.js의 ws 라이브러리 사용: 틀렸습니다. 이는 Java가 아닌 JavaScript/Node.js 환경에서 사용하는 방법입니다.
-- Java의 내장 WebSocket 클래스 직접 사용: 틀렸습니다. Java 표준 라이브러리에는 웹 소켓 서버를 직접 구현하기 위한 내장 클래스가 없습니다. 대신 Jakarta WebSocket API나 Spring과 같은 프레임워크를 사용해야 합니다.
-- Socket.IO Java 서버 구현: 틀렸습니다. Socket.IO는 주로 Node.js 환경을 위한 라이브러리이며, Java 구현체도 있지만 표준적인 웹 소켓 구현 방법은 아닙니다.
-
 ### 02-2 메시지 송수신
 
 #### 문제 1
